@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:fetch_data_api/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fetch_data_api/movie_api.dart';
 
@@ -13,6 +15,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Future<void> _signOut() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
   List<TvShows>? tvShows;
 
   // bool _isLoading= true;
@@ -33,6 +39,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    if (auth.currentUser != null) {
+      print(auth.currentUser!.email);
+    }
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Fetch Data Example',
@@ -47,7 +58,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               Container(
                 margin: EdgeInsets.fromLTRB(0, 50, 0, 0),
-                height: 600,
+                height: 500,
                 child: FutureBuilder(
                   future: fetchdata(),
                   builder: (context, snapShot) {
@@ -117,10 +128,40 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
               ),
+              SizedBox(
+                height: 10,
+              ),
+              Center(
+                // height: 50,
+                // padding: const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
+                child: ElevatedButton(
+                  style: raisedButtonStyle,
+                  child: const Text("Log Out"),
+                  onPressed: () async {
+                    _signOut().then(
+                      (value) => Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => LoginScreen(),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
   }
+
+  final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
+    onPrimary: Colors.grey[200],
+    primary: Colors.blue[400],
+    minimumSize: const Size(100.0, 36.0),
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.zero),
+    ),
+  );
 }
