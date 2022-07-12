@@ -1,6 +1,6 @@
 # try_api5
 
-Tugas 1 Api
+Tugas 2 Auth with firebase
 
 ## Getting Started
 
